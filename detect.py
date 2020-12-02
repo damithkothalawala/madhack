@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-
-get_ipython().run_line_magic('matplotlib', 'inline')
+#get_ipython().run_line_magic('matplotlib', 'inline')
 import base64
+import json
 import io
 import os
 import shutil
@@ -17,7 +17,7 @@ from matplotlib import pyplot as plt
 
 torch.manual_seed(0)
 
-print('Using PyTorch version', torch.__version__)
+#print('Using PyTorch version', torch.__version__)
 
 
 # # Preparing Training and Test Sets
@@ -55,7 +55,7 @@ class ChestXRayDatasetX(torch.utils.data.Dataset):
     def __init__(self, image_dirs, transform):
         def get_images(class_name):
             images = [x for x in os.listdir(image_dirs[class_name]) if x[-3:].lower().endswith('png')]
-            print(f'Found {len(images)} {class_name} examples')
+            #print(f'Found {len(images)} {class_name} examples')
             return images
         
         self.images = {}
@@ -138,23 +138,24 @@ def show_images(images, labels, preds):
         col = 'green'
         if preds[i] != labels[i]:
             col = 'red'
-        plt.xlabel(f'{class_names[int(labels[i].numpy())]}')
+        #plt.xlabel(f'{class_names[int(labels[i].numpy())]}')
+        plt.xlabel('Sadrushya Makato Result')
         plt.ylabel(f'{class_names[int(preds[i].numpy())]}', color=col)
     plt.tight_layout()
     #plt.savefig('out.png')
     pic_IObytes = io.BytesIO()
     plt.savefig(pic_IObytes,  format='png')
     pic_IObytes.seek(0)
-    pic_hash = base64.b64encode(pic_IObytes.read())
-    print(pic_hash)
+    print(json.dumps(base64.b64encode(pic_IObytes.read()).decode("utf-8"))) # Print Base64 Image
+    #print(pic_hash)
 # In[117]:
 
 
 
 
 
-resnet18 = torchvision.models.resnet18(pretrained=True)
-
+#resnet18 = torchvision.models.resnet18(pretrained=True)
+resnet18 = torch.load('MadHacktrainedCovid19')
 resnet18.fc = nn.Linear(resnet18.fc.in_features, 3)
 resnet18= resnet18.to('cpu')
 resnet18.load_state_dict(torch.load('trained',map_location='cpu'))
@@ -179,21 +180,5 @@ def show_preds():
     show_images(images, labels, preds)
 
 
-# In[110]:
-
-
-
-# In[65]:
-
-
 show_preds()
-
-
-# In[74]:
-
-
-# In[ ]:
-
-
-
 
